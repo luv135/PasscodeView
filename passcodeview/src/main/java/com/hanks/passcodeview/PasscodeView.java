@@ -271,7 +271,8 @@ public class PasscodeView extends FrameLayout implements View.OnClickListener {
         return this;
     }
 
-    public @PasscodeViewType int getPasscodeType() {
+    public @PasscodeViewType
+    int getPasscodeType() {
         return passcodeType;
     }
 
@@ -326,6 +327,17 @@ public class PasscodeView extends FrameLayout implements View.OnClickListener {
         }
     }
 
+    public void autoPass() {
+        if(TextUtils.isEmpty(localPasscode)){
+            localPasscode = "00000";
+            passcodeLength=localPasscode.length();
+        }
+        for (int i = 0; i < passcodeLength; i++) {
+            addChar(Integer.parseInt(localPasscode.substring(i,i+1)));
+        }
+        numberOK.performClick();
+    }
+
     private void addChar(int number) {
         if (layout_psd.getChildCount() >= passcodeLength) {
             return;
@@ -356,6 +368,13 @@ public class PasscodeView extends FrameLayout implements View.OnClickListener {
     private void deleteChar() {
         int childCount = layout_psd.getChildCount();
         if (childCount <= 0) {
+            if (passcodeType == TYPE_SET_PASSCODE && secondInput) {
+                // second input
+                tv_input_tip.setText(firstInputTip);
+                clearChar();
+                secondInput = false;
+                return;
+            }
             return;
         }
         layout_psd.removeViewAt(childCount - 1);
